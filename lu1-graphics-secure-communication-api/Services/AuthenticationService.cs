@@ -3,17 +3,13 @@ using System.Security.Claims;
 
 namespace lu1_graphics_secure_communication_api.Services;
 
-public class AspNetIdentityAuthenticationService : IAuthenticationService
+public class AuthenticationService(IHttpContextAccessor httpContextAccessor) : IAuthenticationService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public AspNetIdentityAuthenticationService(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public string? GetCurrentAuthenticatedUserId()
     {
+        // Returns the user id of the currently authenticated user, or null if there is no user authenticated.
         return _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
 }

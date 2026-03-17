@@ -2,5 +2,8 @@
 
 public interface IAuthenticationService
 {
+    /// <summary>
+    /// Returns the user name of the authenticated user
+    /// </summary>
     string? GetCurrentAuthenticatedUserId();
 }
