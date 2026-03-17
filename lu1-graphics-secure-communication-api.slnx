@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="lu1-graphics-secure-communication-api.Tests/lu1-graphics-secure-communication-api.Tests.csproj" Id="734b7592-8500-466a-ac76-8f42c775fdcd" />
   <Project Path="lu1-graphics-secure-communication-api/lu1-graphics-secure-communication-api.csproj" />
 </Solution>
