@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Lu1 Graphics Secure Communication API",
+        Title = "ITCure API",
         Version = "v1"
     });
 });
@@ -66,7 +66,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Lu1 Graphics Secure Communication API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ITCure API v1");
         options.RoutePrefix = "swagger"; // Access at /swagger
         options.CacheLifetime = TimeSpan.Zero; // Disable caching for development
 
@@ -81,7 +81,7 @@ else
 {
     // Show the health message directly in non-development environments
     var buildTimeStamp = File.GetCreationTime(Assembly.GetExecutingAssembly().Location);
-    var currentHealthMessage = $"The API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "✅" : "❌")} | Build timestamp: {buildTimeStamp}";
+    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "✅" : "❌")} | Build timestamp: {buildTimeStamp}";
 
     app.MapGet("/", () => currentHealthMessage);
 }
