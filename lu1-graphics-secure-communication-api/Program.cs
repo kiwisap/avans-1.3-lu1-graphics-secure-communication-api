@@ -13,17 +13,16 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register MVC controllers for handling HTTP requests.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+builder.Services.AddEndpointsApiExplorer();
 
 // Register a global exception handler middleware to catch and handle unhandled exceptions gracefully.
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ITCureExceptionHandler>();
-
-// Configure JSON serialization to use camelCase for property names.
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
 
 // Register OpenAPI/Swagger for API documentation and testing.
 builder.Services.AddSwaggerGen(options =>
@@ -100,7 +99,7 @@ else
 {
     // Show the health message directly in non-development environments
     var buildTimeStamp = File.GetCreationTime(Assembly.GetExecutingAssembly().Location);
-    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "✅" : "❌")} | Build timestamp: {buildTimeStamp}";
+    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "❌" : "✅")} | Build timestamp: {buildTimeStamp}";
 
     app.MapGet("/", () => currentHealthMessage);
 }
