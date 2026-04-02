@@ -49,28 +49,6 @@ public class AccountService : IAccountService
         return _userMappingService.UserToUserDto(user);
     }
 
-    public async Task<UserDto> LoginAsync(LoginDto request)
-    {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-        {
-            throw new BadRequestException("Ongeldige inloggegevens.");
-        }
-
-        var result = await _signInManager.PasswordSignInAsync(
-            user.UserName!,
-            request.Password,
-            isPersistent: true,
-            lockoutOnFailure: false);
-
-        if (!result.Succeeded)
-        {
-            throw new BadRequestException("Ongeldige inloggegevens.");
-        }
-
-        return _userMappingService.UserToUserDto(user);
-    }
-
     public async Task<UserDto> GetCurrentUserAsync(ClaimsPrincipal principal)
     {
         var user = await _userManager.GetUserAsync(principal);

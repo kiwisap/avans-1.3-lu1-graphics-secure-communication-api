@@ -119,4 +119,8 @@ app.UseAuthorization();
 // Register all controller endpoints for the application.
 app.MapControllers();
 
+// Built-in token endpoints on a separate route group
+app.MapGroup("/api/identity")
+   .MapIdentityApi<User>();
+
 app.Run();

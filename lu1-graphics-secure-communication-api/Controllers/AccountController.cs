@@ -24,11 +24,11 @@ public class AccountController : ControllerBase
         return Ok(user);
     }
 
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginDto request)
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> Me()
     {
-        var user = await _accountService.LoginAsync(request);
+        var user = await _accountService.GetCurrentUserAsync(User);
         return Ok(user);
     }
 }
