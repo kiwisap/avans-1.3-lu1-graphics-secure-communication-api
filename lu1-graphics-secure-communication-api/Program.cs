@@ -1,4 +1,5 @@
 using lu1_graphics_secure_communication_api.Data;
+using lu1_graphics_secure_communication_api.Models.Entities;
 using lu1_graphics_secure_communication_api.Services;
 using lu1_graphics_secure_communication_api.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -44,13 +45,12 @@ builder.Services.AddDbContext<ITCureDbContext>(options =>
 
 // Register ASP.NET Core Identity with Dapper stores for user authentication and management.
 // Configures password and user requirements.
-builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+builder.Services.AddIdentityApiEndpoints<User>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 10;
 })
-.AddRoles<IdentityRole>()
-.AddDapperStores(options => options.ConnectionString = sqlConnectionString);
+.AddEntityFrameworkStores<ITCureDbContext>();
 
 // Register IHttpContextAccessor for accessing HTTP context in services (e.g., to get current user info).
 builder.Services.AddHttpContextAccessor();
@@ -59,6 +59,13 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
+
+// Apply any pending database migrations on startup to ensure the database schema is up to date.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ITCureDbContext>();
+    db.Database.Migrate();
+}
 
 // Register OpenAPI/Swagger endpoints.
 if (app.Environment.IsDevelopment())
