@@ -1,8 +1,10 @@
 using lu1_graphics_secure_communication_api.Data;
+using lu1_graphics_secure_communication_api.Exceptions;
+using lu1_graphics_secure_communication_api.Mappings;
+using lu1_graphics_secure_communication_api.Mappings.Interfaces;
 using lu1_graphics_secure_communication_api.Models.Entities;
 using lu1_graphics_secure_communication_api.Services;
 using lu1_graphics_secure_communication_api.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using System.Reflection;
@@ -12,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register MVC controllers for handling HTTP requests.
 builder.Services.AddControllers();
+
+// Register a global exception handler middleware to catch and handle unhandled exceptions gracefully.
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ITCureExceptionHandler>();
 
 // Configure JSON serialization to use camelCase for property names.
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -43,12 +49,15 @@ builder.Services.AddDbContext<ITCureDbContext>(options =>
     options.UseSqlServer(sqlConnectionString);
 });
 
-// Register ASP.NET Core Identity with Dapper stores for user authentication and management.
-// Configures password and user requirements.
+// Register ASP.NET Core Identity with entity framework stores and configure password and user requirements.
 builder.Services.AddIdentityApiEndpoints<User>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 10;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
 })
 .AddEntityFrameworkStores<ITCureDbContext>();
 
@@ -56,6 +65,9 @@ builder.Services.AddIdentityApiEndpoints<User>(options =>
 builder.Services.AddHttpContextAccessor();
 
 // Register services
+builder.Services.AddTransient<IUserMappingService, UserMappingService>();
+
+builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
@@ -96,14 +108,14 @@ else
 // Enforce HTTPS for all requests.
 app.UseHttpsRedirection();
 
+// Use the global exception handler middleware to catch and handle unhandled exceptions gracefully.
+app.UseExceptionHandler();
+
 // Enable authentication middleware.
 app.UseAuthentication();
 
 // Enable authorization middleware.
 app.UseAuthorization();
-
-// Register Identity endpoints for account management (register, login, etc.) under /api/account.
-app.MapGroup("/api/account").MapIdentityApi<IdentityUser>().WithTags("Account");
 
 // Register all controller endpoints for the application.
 app.MapControllers();
