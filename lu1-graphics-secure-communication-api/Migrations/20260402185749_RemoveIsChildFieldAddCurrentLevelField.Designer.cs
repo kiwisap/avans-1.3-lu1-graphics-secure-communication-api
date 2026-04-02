@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lu1_graphics_secure_communication_api.Data;
 
@@ -11,9 +12,11 @@ using lu1_graphics_secure_communication_api.Data;
 namespace lu1_graphics_secure_communication_api.Migrations
 {
     [DbContext(typeof(ITCureDbContext))]
-    partial class ITCureDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260402185749_RemoveIsChildFieldAddCurrentLevelField")]
+    partial class RemoveIsChildFieldAddCurrentLevelField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

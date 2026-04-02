@@ -30,8 +30,7 @@ public class AccountControllerTests
             Password = "Password123!",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var userDto = new UserDto
@@ -40,8 +39,7 @@ public class AccountControllerTests
             Email = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
-            Age = registerDto.Age,
-            IsChild = registerDto.IsChild
+            Age = registerDto.Age
         };
 
         _accountServiceMock.Setup(x => x.RegisterAsync(registerDto))
@@ -61,17 +59,16 @@ public class AccountControllerTests
     }
 
     [TestMethod]
-    public async Task Register_WithChildUser_ShouldReturnOkWithChildUserDto()
+    public async Task Register_WithTreatmentDetails_ShouldReturnOkWithUserDto()
     {
         // Arrange
         var registerDto = new RegisterDto
         {
-            Email = "child@example.com",
+            Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Child",
+            FirstName = "Patient",
             LastName = "User",
             Age = 10,
-            IsChild = true,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
             TreatmentDate = new DateOnly(2024, 6, 1)
@@ -79,12 +76,11 @@ public class AccountControllerTests
 
         var userDto = new UserDto
         {
-            Id = "child123",
+            Id = "patient123",
             Email = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Age = registerDto.Age,
-            IsChild = registerDto.IsChild,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
             TreatmentDate = registerDto.TreatmentDate
@@ -100,7 +96,6 @@ public class AccountControllerTests
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
         var returnedUser = (UserDto)okResult.Value!;
-        Assert.IsTrue(returnedUser.IsChild);
         Assert.AreEqual("Dr. Smith", returnedUser.DoctorName);
     }
 
@@ -115,8 +110,7 @@ public class AccountControllerTests
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -161,8 +155,7 @@ public class AccountControllerTests
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]

@@ -17,8 +17,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
                 Age = registerDto.Age,
                 DoctorName = registerDto.DoctorName,
                 TreatmentDetails = registerDto.TreatmentDetails,
-                TreatmentDate = registerDto.TreatmentDate,
-                IsChild = registerDto.IsChild
+                TreatmentDate = registerDto.TreatmentDate
             };
         }
 
@@ -33,8 +32,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
                 Age = user.Age,
                 DoctorName = user.DoctorName,
                 TreatmentDetails = user.TreatmentDetails,
-                TreatmentDate = user.TreatmentDate,
-                IsChild = user.IsChild
+                TreatmentDate = user.TreatmentDate
             };
         }
     }

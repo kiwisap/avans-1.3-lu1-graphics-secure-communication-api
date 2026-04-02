@@ -50,8 +50,7 @@ public class AccountServiceTests
             Password = "Password123!",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var user = new User
@@ -60,8 +59,7 @@ public class AccountServiceTests
             UserName = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
-            Age = registerDto.Age,
-            IsChild = registerDto.IsChild
+            Age = registerDto.Age
         };
 
         var userDto = new UserDto
@@ -70,8 +68,7 @@ public class AccountServiceTests
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Age = user.Age,
-            IsChild = user.IsChild
+            Age = user.Age
         };
 
         _userManagerMock.Setup(x => x.FindByEmailAsync(registerDto.Email))
@@ -104,8 +101,7 @@ public class AccountServiceTests
             Password = "Password123!",
             FirstName = "Jane",
             LastName = "Doe",
-            Age = 30,
-            IsChild = false
+            Age = 30
         };
 
         var existingUser = new User
@@ -144,8 +140,7 @@ public class AccountServiceTests
             Password = "weak",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var user = new User
@@ -186,17 +181,16 @@ public class AccountServiceTests
     }
 
     [TestMethod]
-    public async Task RegisterAsync_WithChildUser_ShouldRegisterWithIsChildTrue()
+    public async Task RegisterAsync_WithTreatmentDetails_ShouldRegisterWithAllFields()
     {
         // Arrange
         var registerDto = new RegisterDto
         {
-            Email = "child@example.com",
+            Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Child",
+            FirstName = "Patient",
             LastName = "User",
             Age = 10,
-            IsChild = true,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
             TreatmentDate = new DateOnly(2024, 6, 1)
@@ -209,7 +203,6 @@ public class AccountServiceTests
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Age = registerDto.Age,
-            IsChild = registerDto.IsChild,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
             TreatmentDate = registerDto.TreatmentDate
@@ -217,12 +210,11 @@ public class AccountServiceTests
 
         var userDto = new UserDto
         {
-            Id = "child123",
+            Id = "patient123",
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Age = user.Age,
-            IsChild = user.IsChild,
             DoctorName = user.DoctorName,
             TreatmentDetails = user.TreatmentDetails,
             TreatmentDate = user.TreatmentDate
@@ -242,7 +234,6 @@ public class AccountServiceTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.IsChild);
         Assert.AreEqual("Dr. Smith", result.DoctorName);
         Assert.AreEqual("Therapy", result.TreatmentDetails);
     }
@@ -258,8 +249,7 @@ public class AccountServiceTests
             UserName = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var userDto = new UserDto
@@ -268,8 +258,7 @@ public class AccountServiceTests
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Age = user.Age,
-            IsChild = user.IsChild
+            Age = user.Age
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
