@@ -69,7 +69,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IUserMappingService, UserMappingService>();
 
 builder.Services.AddTransient<IAccountService, AccountService>();
-builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
 

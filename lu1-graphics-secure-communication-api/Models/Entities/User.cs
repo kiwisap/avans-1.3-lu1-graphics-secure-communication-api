@@ -16,5 +16,5 @@ public class User : IdentityUser
 
     public DateOnly? TreatmentDate { get; set; }
 
-    public bool IsChild { get; set; }
+    public int CurrentLevel { get; set; } = 1;
 }

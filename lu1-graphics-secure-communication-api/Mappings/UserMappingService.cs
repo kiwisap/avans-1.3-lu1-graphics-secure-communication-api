@@ -17,8 +17,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
                 Age = registerDto.Age,
                 DoctorName = registerDto.DoctorName,
                 TreatmentDetails = registerDto.TreatmentDetails,
-                TreatmentDate = registerDto.TreatmentDate,
-                IsChild = registerDto.IsChild
+                TreatmentDate = registerDto.TreatmentDate
             };
         }
 
@@ -26,7 +25,6 @@ namespace lu1_graphics_secure_communication_api.Mappings
         {
             return new UserDto
             {
-                Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -34,7 +32,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
                 DoctorName = user.DoctorName,
                 TreatmentDetails = user.TreatmentDetails,
                 TreatmentDate = user.TreatmentDate,
-                IsChild = user.IsChild
+                CurrentLevel = user.CurrentLevel
             };
         }
     }

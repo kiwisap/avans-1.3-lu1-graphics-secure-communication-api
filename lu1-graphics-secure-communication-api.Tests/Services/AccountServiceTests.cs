@@ -13,7 +13,6 @@ namespace lu1_graphics_secure_communication_api.Tests.Services;
 public class AccountServiceTests
 {
     private Mock<UserManager<User>> _userManagerMock = null!;
-    private Mock<SignInManager<User>> _signInManagerMock = null!;
     private Mock<IUserMappingService> _userMappingServiceMock = null!;
     private AccountService _accountService = null!;
 
@@ -24,19 +23,10 @@ public class AccountServiceTests
         _userManagerMock = new Mock<UserManager<User>>(
             userStoreMock.Object, null, null, null, null, null, null, null, null);
 
-        var contextAccessorMock = new Mock<Microsoft.AspNetCore.Http.IHttpContextAccessor>();
-        var claimsFactoryMock = new Mock<IUserClaimsPrincipalFactory<User>>();
-        _signInManagerMock = new Mock<SignInManager<User>>(
-            _userManagerMock.Object,
-            contextAccessorMock.Object,
-            claimsFactoryMock.Object,
-            null, null, null, null);
-
         _userMappingServiceMock = new Mock<IUserMappingService>();
 
         _accountService = new AccountService(
             _userManagerMock.Object,
-            _signInManagerMock.Object,
             _userMappingServiceMock.Object);
     }
 
@@ -50,8 +40,7 @@ public class AccountServiceTests
             Password = "Password123!",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var user = new User
@@ -60,18 +49,15 @@ public class AccountServiceTests
             UserName = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
-            Age = registerDto.Age,
-            IsChild = registerDto.IsChild
+            Age = registerDto.Age
         };
 
         var userDto = new UserDto
         {
-            Id = "user123",
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Age = user.Age,
-            IsChild = user.IsChild
+            Age = user.Age
         };
 
         _userManagerMock.Setup(x => x.FindByEmailAsync(registerDto.Email))
@@ -104,8 +90,7 @@ public class AccountServiceTests
             Password = "Password123!",
             FirstName = "Jane",
             LastName = "Doe",
-            Age = 30,
-            IsChild = false
+            Age = 30
         };
 
         var existingUser = new User
@@ -144,8 +129,7 @@ public class AccountServiceTests
             Password = "weak",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var user = new User
@@ -186,17 +170,16 @@ public class AccountServiceTests
     }
 
     [TestMethod]
-    public async Task RegisterAsync_WithChildUser_ShouldRegisterWithIsChildTrue()
+    public async Task RegisterAsync_WithTreatmentDetails_ShouldRegisterWithAllFields()
     {
         // Arrange
         var registerDto = new RegisterDto
         {
-            Email = "child@example.com",
+            Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Child",
+            FirstName = "Patient",
             LastName = "User",
             Age = 10,
-            IsChild = true,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
             TreatmentDate = new DateOnly(2024, 6, 1)
@@ -209,7 +192,6 @@ public class AccountServiceTests
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Age = registerDto.Age,
-            IsChild = registerDto.IsChild,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
             TreatmentDate = registerDto.TreatmentDate
@@ -217,12 +199,10 @@ public class AccountServiceTests
 
         var userDto = new UserDto
         {
-            Id = "child123",
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Age = user.Age,
-            IsChild = user.IsChild,
             DoctorName = user.DoctorName,
             TreatmentDetails = user.TreatmentDetails,
             TreatmentDate = user.TreatmentDate
@@ -242,7 +222,6 @@ public class AccountServiceTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsTrue(result.IsChild);
         Assert.AreEqual("Dr. Smith", result.DoctorName);
         Assert.AreEqual("Therapy", result.TreatmentDetails);
     }
@@ -258,18 +237,15 @@ public class AccountServiceTests
             UserName = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var userDto = new UserDto
         {
-            Id = user.Id,
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Age = user.Age,
-            IsChild = user.IsChild
+            Age = user.Age
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -288,7 +264,6 @@ public class AccountServiceTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(userDto.Id, result.Id);
         Assert.AreEqual(userDto.Email, result.Email);
         Assert.AreEqual(userDto.FirstName, result.FirstName);
     }
@@ -319,5 +294,164 @@ public class AccountServiceTests
 
         Assert.IsNotNull(exception);
         Assert.AreEqual("Gebruiker niet gevonden.", exception.Message);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithValidUser_ShouldUpdateLevel()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = "user123",
+            Email = "test@example.com",
+            UserName = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 1
+        };
+
+        var updatedUserDto = new UserDto
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Age = user.Age,
+            CurrentLevel = 5
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Email, user.Email)
+        }));
+
+        _userManagerMock.Setup(x => x.GetUserAsync(claims))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(IdentityResult.Success);
+        _userMappingServiceMock.Setup(x => x.UserToUserDto(It.IsAny<User>()))
+            .Returns(updatedUserDto);
+
+        // Act
+        var result = await _accountService.UpdateCurrentLevel(claims, 5);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(5, result.CurrentLevel);
+        Assert.AreEqual(5, user.CurrentLevel);
+        _userManagerMock.Verify(x => x.UpdateAsync(user), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithInvalidUser_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "invalid-user-id")
+        }));
+
+        _userManagerMock.Setup(x => x.GetUserAsync(claims))
+            .ReturnsAsync((User?)null);
+
+        // Act & Assert
+        NotFoundException? exception = null;
+        try
+        {
+            await _accountService.UpdateCurrentLevel(claims, 5);
+            Assert.Fail("Expected NotFoundException was not thrown");
+        }
+        catch (NotFoundException ex)
+        {
+            exception = ex;
+        }
+
+        Assert.IsNotNull(exception);
+        Assert.AreEqual("Gebruiker niet gevonden.", exception.Message);
+        _userManagerMock.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithDifferentLevels_ShouldUpdateCorrectly()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = "user123",
+            Email = "test@example.com",
+            UserName = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 3
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
+        }));
+
+        _userManagerMock.Setup(x => x.GetUserAsync(claims))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(IdentityResult.Success);
+        _userMappingServiceMock.Setup(x => x.UserToUserDto(It.IsAny<User>()))
+            .Returns<User>(u => new UserDto
+            {
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Age = u.Age,
+                CurrentLevel = u.CurrentLevel
+            });
+
+        // Act
+        var result = await _accountService.UpdateCurrentLevel(claims, 10);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(10, user.CurrentLevel);
+        Assert.AreEqual(10, result.CurrentLevel);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithLevelOne_ShouldSetToOne()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = "user123",
+            Email = "test@example.com",
+            UserName = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 5
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
+        }));
+
+        _userManagerMock.Setup(x => x.GetUserAsync(claims))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(IdentityResult.Success);
+        _userMappingServiceMock.Setup(x => x.UserToUserDto(It.IsAny<User>()))
+            .Returns<User>(u => new UserDto
+            {
+                Email = u.Email,
+                CurrentLevel = u.CurrentLevel
+            });
+
+        // Act
+        var result = await _accountService.UpdateCurrentLevel(claims, 1);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, user.CurrentLevel);
+        Assert.AreEqual(1, result.CurrentLevel);
     }
 }

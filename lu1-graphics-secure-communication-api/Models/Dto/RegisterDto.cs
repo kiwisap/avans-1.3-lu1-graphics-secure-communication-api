@@ -17,6 +17,4 @@ public class RegisterDto
     public string? TreatmentDetails { get; set; }
 
     public DateOnly? TreatmentDate { get; set; }
-
-    public bool IsChild { get; set; }
 }

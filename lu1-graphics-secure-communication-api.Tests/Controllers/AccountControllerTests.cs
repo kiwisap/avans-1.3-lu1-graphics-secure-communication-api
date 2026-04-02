@@ -30,18 +30,15 @@ public class AccountControllerTests
             Password = "Password123!",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var userDto = new UserDto
         {
-            Id = "user123",
             Email = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
-            Age = registerDto.Age,
-            IsChild = registerDto.IsChild
+            Age = registerDto.Age
         };
 
         _accountServiceMock.Setup(x => x.RegisterAsync(registerDto))
@@ -61,17 +58,16 @@ public class AccountControllerTests
     }
 
     [TestMethod]
-    public async Task Register_WithChildUser_ShouldReturnOkWithChildUserDto()
+    public async Task Register_WithTreatmentDetails_ShouldReturnOkWithUserDto()
     {
         // Arrange
         var registerDto = new RegisterDto
         {
-            Email = "child@example.com",
+            Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Child",
+            FirstName = "Patient",
             LastName = "User",
             Age = 10,
-            IsChild = true,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
             TreatmentDate = new DateOnly(2024, 6, 1)
@@ -79,12 +75,10 @@ public class AccountControllerTests
 
         var userDto = new UserDto
         {
-            Id = "child123",
             Email = registerDto.Email,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Age = registerDto.Age,
-            IsChild = registerDto.IsChild,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
             TreatmentDate = registerDto.TreatmentDate
@@ -100,7 +94,6 @@ public class AccountControllerTests
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
         var returnedUser = (UserDto)okResult.Value!;
-        Assert.IsTrue(returnedUser.IsChild);
         Assert.AreEqual("Dr. Smith", returnedUser.DoctorName);
     }
 
@@ -111,12 +104,10 @@ public class AccountControllerTests
         var userId = "user123";
         var userDto = new UserDto
         {
-            Id = userId,
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -145,7 +136,7 @@ public class AccountControllerTests
         Assert.IsNotNull(okResult.Value);
         Assert.IsInstanceOfType(okResult.Value, typeof(UserDto));
         var returnedUser = (UserDto)okResult.Value;
-        Assert.AreEqual(userDto.Id, returnedUser.Id);
+        Assert.AreEqual(userDto.Email, returnedUser.Email);
         Assert.AreEqual(userDto.Email, returnedUser.Email);
         _accountServiceMock.Verify(x => x.GetCurrentUserAsync(It.IsAny<ClaimsPrincipal>()), Times.Once);
     }
@@ -157,12 +148,10 @@ public class AccountControllerTests
         var userId = "user123";
         var userDto = new UserDto
         {
-            Id = userId,
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Age = 25,
-            IsChild = false
+            Age = 25
         };
 
         var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -189,5 +178,141 @@ public class AccountControllerTests
         // Assert
         Assert.IsNotNull(capturedPrincipal);
         Assert.AreEqual(claims, capturedPrincipal);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithValidRequest_ShouldReturnOkWithUpdatedUser()
+    {
+        // Arrange
+        var userId = "user123";
+        var newLevel = 5;
+        var valueDto = new ValueDto<int> { Value = newLevel };
+
+        var updatedUserDto = new UserDto
+        {
+            Email = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = newLevel
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        }, "TestAuthentication"));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        _accountServiceMock.Setup(x => x.UpdateCurrentLevel(It.IsAny<ClaimsPrincipal>(), newLevel))
+            .ReturnsAsync(updatedUserDto);
+
+        // Act
+        var result = await _controller.UpdateCurrentLevel(valueDto);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        Assert.IsNotNull(okResult.Value);
+        Assert.IsInstanceOfType(okResult.Value, typeof(UserDto));
+        var returnedUser = (UserDto)okResult.Value;
+        Assert.AreEqual(newLevel, returnedUser.CurrentLevel);
+        _accountServiceMock.Verify(x => x.UpdateCurrentLevel(It.IsAny<ClaimsPrincipal>(), newLevel), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_CallsServiceWithCorrectPrincipalAndLevel()
+    {
+        // Arrange
+        var userId = "user123";
+        var newLevel = 10;
+        var valueDto = new ValueDto<int> { Value = newLevel };
+
+        var updatedUserDto = new UserDto
+        {
+            Email = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = newLevel
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        }, "TestAuthentication"));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        ClaimsPrincipal? capturedPrincipal = null;
+        int capturedLevel = 0;
+        _accountServiceMock.Setup(x => x.UpdateCurrentLevel(It.IsAny<ClaimsPrincipal>(), It.IsAny<int>()))
+            .Callback<ClaimsPrincipal, int>((p, l) =>
+            {
+                capturedPrincipal = p;
+                capturedLevel = l;
+            })
+            .ReturnsAsync(updatedUserDto);
+
+        // Act
+        await _controller.UpdateCurrentLevel(valueDto);
+
+        // Assert
+        Assert.IsNotNull(capturedPrincipal);
+        Assert.AreEqual(claims, capturedPrincipal);
+        Assert.AreEqual(newLevel, capturedLevel);
+    }
+
+    [TestMethod]
+    public async Task UpdateCurrentLevel_WithLevelOne_ShouldUpdateToOne()
+    {
+        // Arrange
+        var valueDto = new ValueDto<int> { Value = 1 };
+
+        var updatedUserDto = new UserDto
+        {
+            Email = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 1
+        };
+
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "user123")
+        }, "TestAuthentication"));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        _accountServiceMock.Setup(x => x.UpdateCurrentLevel(It.IsAny<ClaimsPrincipal>(), 1))
+            .ReturnsAsync(updatedUserDto);
+
+        // Act
+        var result = await _controller.UpdateCurrentLevel(valueDto);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var returnedUser = (UserDto)okResult.Value!;
+        Assert.AreEqual(1, returnedUser.CurrentLevel);
     }
 }
