@@ -2,8 +2,6 @@
 
 public class UserDto
 {
-    public string Id { get; set; } = default!;
-
     public string Email { get; set; } = default!;
 
     public string FirstName { get; set; } = default!;
@@ -17,4 +15,6 @@ public class UserDto
     public string? TreatmentDetails { get; set; }
 
     public DateOnly? TreatmentDate { get; set; }
+
+    public int CurrentLevel { get; set; }
 }

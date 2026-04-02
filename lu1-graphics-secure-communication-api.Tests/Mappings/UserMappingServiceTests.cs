@@ -111,7 +111,6 @@ public class UserMappingServiceTests
 
         // Assert
         Assert.IsNotNull(userDto);
-        Assert.AreEqual(user.Id, userDto.Id);
         Assert.AreEqual(user.Email, userDto.Email);
         Assert.AreEqual(user.FirstName, userDto.FirstName);
         Assert.AreEqual(user.LastName, userDto.LastName);
@@ -140,7 +139,6 @@ public class UserMappingServiceTests
 
         // Assert
         Assert.IsNotNull(userDto);
-        Assert.AreEqual(user.Id, userDto.Id);
         Assert.AreEqual(user.DoctorName, userDto.DoctorName);
         Assert.AreEqual(user.TreatmentDetails, userDto.TreatmentDetails);
         Assert.AreEqual(user.TreatmentDate, userDto.TreatmentDate);
@@ -171,5 +169,51 @@ public class UserMappingServiceTests
         Assert.IsNull(userDto.DoctorName);
         Assert.IsNull(userDto.TreatmentDetails);
         Assert.IsNull(userDto.TreatmentDate);
+    }
+
+    [TestMethod]
+    public void UserToUserDto_WithCurrentLevel_ShouldMapCurrentLevel()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = "user123",
+            Email = "test@example.com",
+            UserName = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 5
+        };
+
+        // Act
+        var userDto = _mappingService.UserToUserDto(user);
+
+        // Assert
+        Assert.IsNotNull(userDto);
+        Assert.AreEqual(5, userDto.CurrentLevel);
+    }
+
+    [TestMethod]
+    public void UserToUserDto_WithDefaultCurrentLevel_ShouldMapToOne()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = "user123",
+            Email = "test@example.com",
+            UserName = "test@example.com",
+            FirstName = "John",
+            LastName = "Doe",
+            Age = 25,
+            CurrentLevel = 1
+        };
+
+        // Act
+        var userDto = _mappingService.UserToUserDto(user);
+
+        // Assert
+        Assert.IsNotNull(userDto);
+        Assert.AreEqual(1, userDto.CurrentLevel);
     }
 }

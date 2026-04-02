@@ -31,4 +31,12 @@ public class AccountController : ControllerBase
         var user = await _accountService.GetCurrentUserAsync(User);
         return Ok(user);
     }
+
+    [HttpPost("current-level")]
+    [Authorize]
+    public async Task<IActionResult> UpdateCurrentLevel([FromBody] ValueDto<int> newLevel)
+    {
+        var user = await _accountService.UpdateCurrentLevel(User, newLevel.Value);
+        return Ok(user);
+    }
 }

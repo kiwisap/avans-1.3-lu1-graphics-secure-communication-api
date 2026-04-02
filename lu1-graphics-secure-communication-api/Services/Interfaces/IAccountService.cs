@@ -8,4 +8,6 @@ public interface IAccountService
     Task<UserDto> RegisterAsync(RegisterDto request);
 
     Task<UserDto> GetCurrentUserAsync(ClaimsPrincipal principal);
+
+    Task<UserDto> UpdateCurrentLevel(ClaimsPrincipal principal, int level);
 }

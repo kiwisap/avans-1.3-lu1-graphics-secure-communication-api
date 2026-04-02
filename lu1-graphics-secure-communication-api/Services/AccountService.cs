@@ -11,17 +11,14 @@ namespace lu1_graphics_secure_communication_api.Services;
 public class AccountService : IAccountService
 {
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
 
     private readonly IUserMappingService _userMappingService;
 
     public AccountService(
         UserManager<User> userManager,
-        SignInManager<User> signInManager,
         IUserMappingService userMappingService)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
         _userMappingService = userMappingService;
     }
 
@@ -51,12 +48,29 @@ public class AccountService : IAccountService
 
     public async Task<UserDto> GetCurrentUserAsync(ClaimsPrincipal principal)
     {
+        var user = await ValidateUserExists(principal);
+
+        return _userMappingService.UserToUserDto(user);
+    }
+
+    public async Task<UserDto> UpdateCurrentLevel(ClaimsPrincipal principal, int newLevel)
+    {
+        var user = await ValidateUserExists(principal);
+
+        user.CurrentLevel = newLevel;
+        await _userManager.UpdateAsync(user);
+
+        return _userMappingService.UserToUserDto(user);
+    }
+
+    private async Task<User> ValidateUserExists(ClaimsPrincipal principal)
+    {
         var user = await _userManager.GetUserAsync(principal);
         if (user == null)
         {
             throw new NotFoundException("Gebruiker niet gevonden.");
         }
 
-        return _userMappingService.UserToUserDto(user);
+        return user;
     }
 }

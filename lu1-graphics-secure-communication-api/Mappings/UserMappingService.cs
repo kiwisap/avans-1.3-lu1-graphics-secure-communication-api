@@ -25,14 +25,14 @@ namespace lu1_graphics_secure_communication_api.Mappings
         {
             return new UserDto
             {
-                Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Age = user.Age,
                 DoctorName = user.DoctorName,
                 TreatmentDetails = user.TreatmentDetails,
-                TreatmentDate = user.TreatmentDate
+                TreatmentDate = user.TreatmentDate,
+                CurrentLevel = user.CurrentLevel
             };
         }
     }
