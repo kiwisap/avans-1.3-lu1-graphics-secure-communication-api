@@ -1,7 +1,10 @@
 using lu1_graphics_secure_communication_api.Data;
+using lu1_graphics_secure_communication_api.Exceptions;
+using lu1_graphics_secure_communication_api.Mappings;
+using lu1_graphics_secure_communication_api.Mappings.Interfaces;
+using lu1_graphics_secure_communication_api.Models.Entities;
 using lu1_graphics_secure_communication_api.Services;
 using lu1_graphics_secure_communication_api.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using System.Reflection;
@@ -10,13 +13,16 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register MVC controllers for handling HTTP requests.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+builder.Services.AddEndpointsApiExplorer();
 
-// Configure JSON serialization to use camelCase for property names.
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
+// Register a global exception handler middleware to catch and handle unhandled exceptions gracefully.
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ITCureExceptionHandler>();
 
 // Register OpenAPI/Swagger for API documentation and testing.
 builder.Services.AddSwaggerGen(options =>
@@ -42,23 +48,35 @@ builder.Services.AddDbContext<ITCureDbContext>(options =>
     options.UseSqlServer(sqlConnectionString);
 });
 
-// Register ASP.NET Core Identity with Dapper stores for user authentication and management.
-// Configures password and user requirements.
-builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+// Register ASP.NET Core Identity with entity framework stores and configure password and user requirements.
+builder.Services.AddIdentityApiEndpoints<User>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 10;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
 })
-.AddRoles<IdentityRole>()
-.AddDapperStores(options => options.ConnectionString = sqlConnectionString);
+.AddEntityFrameworkStores<ITCureDbContext>();
 
 // Register IHttpContextAccessor for accessing HTTP context in services (e.g., to get current user info).
 builder.Services.AddHttpContextAccessor();
 
 // Register services
+builder.Services.AddTransient<IUserMappingService, UserMappingService>();
+
+builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
+
+// Apply any pending database migrations on startup to ensure the database schema is up to date.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ITCureDbContext>();
+    db.Database.Migrate();
+}
 
 // Register OpenAPI/Swagger endpoints.
 if (app.Environment.IsDevelopment())
@@ -81,7 +99,7 @@ else
 {
     // Show the health message directly in non-development environments
     var buildTimeStamp = File.GetCreationTime(Assembly.GetExecutingAssembly().Location);
-    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "✅" : "❌")} | Build timestamp: {buildTimeStamp}";
+    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "❌" : "✅")} | Build timestamp: {buildTimeStamp}";
 
     app.MapGet("/", () => currentHealthMessage);
 }
@@ -89,16 +107,20 @@ else
 // Enforce HTTPS for all requests.
 app.UseHttpsRedirection();
 
+// Use the global exception handler middleware to catch and handle unhandled exceptions gracefully.
+app.UseExceptionHandler();
+
 // Enable authentication middleware.
 app.UseAuthentication();
 
 // Enable authorization middleware.
 app.UseAuthorization();
 
-// Register Identity endpoints for account management (register, login, etc.) under /api/account.
-app.MapGroup("/api/account").MapIdentityApi<IdentityUser>().WithTags("Account");
-
 // Register all controller endpoints for the application.
 app.MapControllers();
+
+// Built-in token endpoints on a separate route group
+app.MapGroup("/api/identity")
+   .MapIdentityApi<User>();
 
 app.Run();
