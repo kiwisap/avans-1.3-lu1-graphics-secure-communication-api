@@ -40,13 +40,16 @@ builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true
 builder.Services.AddAuthorization();
 
 // Retrieve the SQL connection string from configuration.
-var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionString");
+var sqlConnectionString = builder.Configuration.GetConnectionString("SqlConnectionString")
+    ?? builder.Configuration.GetValue<string>("SqlConnectionString");
+if (string.IsNullOrWhiteSpace(sqlConnectionString))
+{
+    throw new InvalidOperationException("Configuration value 'SqlConnectionString' is missing or empty.");
+}
 
 // Register the EF database context with the specified SQL connection string.
-builder.Services.AddDbContext<ITCureDbContext>(options =>
-{
-    options.UseSqlServer(sqlConnectionString);
-});
+builder.Services.AddDbContext<ITCureDbContext>(options => options.UseSqlServer(sqlConnectionString));
+);
 
 // Register ASP.NET Core Identity with entity framework stores and configure password and user requirements.
 builder.Services.AddIdentityApiEndpoints<User>(options =>
@@ -87,19 +90,13 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "ITCure API v1");
         options.RoutePrefix = "swagger"; // Access at /swagger
         options.CacheLifetime = TimeSpan.Zero; // Disable caching for development
-
-        // Inject a warning in the Swagger UI if the SQL connection string is missing
-        if (string.IsNullOrWhiteSpace(sqlConnectionString))
-        {
-            options.HeadContent = "<h1 align=\"center\">❌ SqlConnectionString not found ❌</h1>";
-        }
     });
 }
 else
 {
     // Show the health message directly in non-development environments
     var buildTimeStamp = File.GetCreationTime(Assembly.GetExecutingAssembly().Location);
-    var currentHealthMessage = $"The ITCure API is up 🚀 | Connection string found: {(string.IsNullOrWhiteSpace(sqlConnectionString) ? "❌" : "✅")} | Build timestamp: {buildTimeStamp}";
+    var currentHealthMessage = $"The ITCure API is up 🚀 | Build timestamp: {buildTimeStamp}";
 
     app.MapGet("/", () => currentHealthMessage);
 }
