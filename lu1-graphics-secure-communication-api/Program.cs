@@ -49,7 +49,6 @@ if (string.IsNullOrWhiteSpace(sqlConnectionString))
 
 // Register the EF database context with the specified SQL connection string.
 builder.Services.AddDbContext<ITCureDbContext>(options => options.UseSqlServer(sqlConnectionString));
-);
 
 // Register ASP.NET Core Identity with entity framework stores and configure password and user requirements.
 builder.Services.AddIdentityApiEndpoints<User>(options =>
