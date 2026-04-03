@@ -4,9 +4,7 @@ namespace lu1_graphics_secure_communication_api.Models.Entities;
 
 public class User : IdentityUser
 {
-    public string FirstName { get; set; } = default!;
-
-    public string LastName { get; set; } = default!;
+    public string Name { get; set; } = default!;
 
     public int Age { get; set; }
 

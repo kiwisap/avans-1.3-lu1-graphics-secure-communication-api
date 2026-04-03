@@ -23,8 +23,7 @@ public class UserMappingServiceTests
         {
             Email = "test@example.com",
             Password = "Password123!",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -35,8 +34,7 @@ public class UserMappingServiceTests
         Assert.IsNotNull(user);
         Assert.AreEqual(registerDto.Email, user.Email);
         Assert.AreEqual(registerDto.Email, user.UserName);
-        Assert.AreEqual(registerDto.FirstName, user.FirstName);
-        Assert.AreEqual(registerDto.LastName, user.LastName);
+        Assert.AreEqual(registerDto.Name, user.Name);
         Assert.AreEqual(registerDto.Age, user.Age);
     }
 
@@ -48,8 +46,7 @@ public class UserMappingServiceTests
         {
             Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Patient",
-            LastName = "User",
+            Name = "Patient",
             Age = 10,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy sessions",
@@ -74,8 +71,7 @@ public class UserMappingServiceTests
         {
             Email = "test@example.com",
             Password = "Password123!",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 30,
             DoctorName = null,
             TreatmentDetails = null,
@@ -101,8 +97,7 @@ public class UserMappingServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -112,8 +107,7 @@ public class UserMappingServiceTests
         // Assert
         Assert.IsNotNull(userDto);
         Assert.AreEqual(user.Email, userDto.Email);
-        Assert.AreEqual(user.FirstName, userDto.FirstName);
-        Assert.AreEqual(user.LastName, userDto.LastName);
+        Assert.AreEqual(user.Name, userDto.Name);
         Assert.AreEqual(user.Age, userDto.Age);
     }
 
@@ -126,8 +120,7 @@ public class UserMappingServiceTests
             Id = "patient123",
             Email = "patient@example.com",
             UserName = "patient@example.com",
-            FirstName = "Patient",
-            LastName = "User",
+            Name = "Patient",
             Age = 10,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy sessions",
@@ -153,8 +146,7 @@ public class UserMappingServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 30,
             DoctorName = null,
             TreatmentDetails = null,
@@ -180,8 +172,7 @@ public class UserMappingServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 5
         };
@@ -203,8 +194,7 @@ public class UserMappingServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 1
         };

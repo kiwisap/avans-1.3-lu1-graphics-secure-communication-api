@@ -28,16 +28,14 @@ public class AccountControllerTests
         {
             Email = "test@example.com",
             Password = "Password123!",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
         var userDto = new UserDto
         {
             Email = registerDto.Email,
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
+            Name = registerDto.Name,
             Age = registerDto.Age
         };
 
@@ -65,8 +63,7 @@ public class AccountControllerTests
         {
             Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Patient",
-            LastName = "User",
+            Name = "Patient",
             Age = 10,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
@@ -76,8 +73,7 @@ public class AccountControllerTests
         var userDto = new UserDto
         {
             Email = registerDto.Email,
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
+            Name = registerDto.Name,
             Age = registerDto.Age,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
@@ -105,8 +101,7 @@ public class AccountControllerTests
         var userDto = new UserDto
         {
             Email = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -149,8 +144,7 @@ public class AccountControllerTests
         var userDto = new UserDto
         {
             Email = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -191,8 +185,7 @@ public class AccountControllerTests
         var updatedUserDto = new UserDto
         {
             Email = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = newLevel
         };
@@ -237,8 +230,7 @@ public class AccountControllerTests
         var updatedUserDto = new UserDto
         {
             Email = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = newLevel
         };
@@ -284,8 +276,7 @@ public class AccountControllerTests
         var updatedUserDto = new UserDto
         {
             Email = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 1
         };

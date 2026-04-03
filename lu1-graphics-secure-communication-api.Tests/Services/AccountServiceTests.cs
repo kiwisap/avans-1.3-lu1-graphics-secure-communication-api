@@ -38,8 +38,7 @@ public class AccountServiceTests
         {
             Email = "test@example.com",
             Password = "Password123!",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -47,16 +46,14 @@ public class AccountServiceTests
         {
             Email = registerDto.Email,
             UserName = registerDto.Email,
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
+            Name = registerDto.Name,
             Age = registerDto.Age
         };
 
         var userDto = new UserDto
         {
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            Name = user.Name,
             Age = user.Age
         };
 
@@ -75,8 +72,7 @@ public class AccountServiceTests
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(userDto.Email, result.Email);
-        Assert.AreEqual(userDto.FirstName, result.FirstName);
-        Assert.AreEqual(userDto.LastName, result.LastName);
+        Assert.AreEqual(userDto.Name, result.Name);
         _userManagerMock.Verify(x => x.CreateAsync(user, registerDto.Password), Times.Once);
     }
 
@@ -88,8 +84,7 @@ public class AccountServiceTests
         {
             Email = "existing@example.com",
             Password = "Password123!",
-            FirstName = "Jane",
-            LastName = "Doe",
+            Name = "Jane",
             Age = 30
         };
 
@@ -127,8 +122,7 @@ public class AccountServiceTests
         {
             Email = "test@example.com",
             Password = "weak",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
@@ -177,8 +171,7 @@ public class AccountServiceTests
         {
             Email = "patient@example.com",
             Password = "Password123!",
-            FirstName = "Patient",
-            LastName = "User",
+            Name = "Patient",
             Age = 10,
             DoctorName = "Dr. Smith",
             TreatmentDetails = "Therapy",
@@ -189,8 +182,7 @@ public class AccountServiceTests
         {
             Email = registerDto.Email,
             UserName = registerDto.Email,
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
+            Name = registerDto.Name,
             Age = registerDto.Age,
             DoctorName = registerDto.DoctorName,
             TreatmentDetails = registerDto.TreatmentDetails,
@@ -200,8 +192,7 @@ public class AccountServiceTests
         var userDto = new UserDto
         {
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            Name = user.Name,
             Age = user.Age,
             DoctorName = user.DoctorName,
             TreatmentDetails = user.TreatmentDetails,
@@ -235,16 +226,14 @@ public class AccountServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25
         };
 
         var userDto = new UserDto
         {
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            Name = user.Name,
             Age = user.Age
         };
 
@@ -265,7 +254,7 @@ public class AccountServiceTests
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(userDto.Email, result.Email);
-        Assert.AreEqual(userDto.FirstName, result.FirstName);
+        Assert.AreEqual(userDto.Name, result.Name);
     }
 
     [TestMethod]
@@ -305,8 +294,7 @@ public class AccountServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 1
         };
@@ -314,8 +302,7 @@ public class AccountServiceTests
         var updatedUserDto = new UserDto
         {
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            Name = user.Name,
             Age = user.Age,
             CurrentLevel = 5
         };
@@ -381,8 +368,7 @@ public class AccountServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 3
         };
@@ -400,8 +386,7 @@ public class AccountServiceTests
             .Returns<User>(u => new UserDto
             {
                 Email = u.Email,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
+                Name = u.Name,
                 Age = u.Age,
                 CurrentLevel = u.CurrentLevel
             });
@@ -424,8 +409,7 @@ public class AccountServiceTests
             Id = "user123",
             Email = "test@example.com",
             UserName = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Name = "John",
             Age = 25,
             CurrentLevel = 5
         };

@@ -12,8 +12,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
             {
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
+                Name = registerDto.Name,
                 Age = registerDto.Age,
                 DoctorName = registerDto.DoctorName,
                 TreatmentDetails = registerDto.TreatmentDetails,
@@ -26,8 +25,7 @@ namespace lu1_graphics_secure_communication_api.Mappings
             return new UserDto
             {
                 Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                Name = user.Name,
                 Age = user.Age,
                 DoctorName = user.DoctorName,
                 TreatmentDetails = user.TreatmentDetails,
