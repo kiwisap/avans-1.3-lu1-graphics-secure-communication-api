@@ -1,0 +1,663 @@
+{
+  "info": {
+    "_postman_id": "5c06ebb0-f3bb-4acd-a364-7842d2da400f",
+    "name": "ITCure API Tests",
+    "description": "## ITCure API Tests\n\nThis collection contains automated tests for the ITCure API. The tests are organized by feature and cover the main API endpoints.\n\n### Test credentials\n\n| Field | Value |\n|-------|-------|\n| Email | `test@test.com` |\n| Password | `Test!12345` |",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52868045",
+    "_collection_link": "https://go.postman.co/collection/52868045-5c06ebb0-f3bb-4acd-a364-7842d2da400f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Inloggen met geldige gebruiker",
+      "item": [
+        {
+          "name": "Inloggen met geldige gebruiker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Response bevat een accessToken', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('accessToken');",
+                  "    pm.expect(json.accessToken).to.be.a('string').and.not.empty;",
+                  "})",
+                  "",
+                  "pm.test('ST-03: Response bevat een tokenType', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('tokenType');",
+                  "    pm.expect(json.tokenType).to.eql('Bearer');",
+                  "})",
+                  "",
+                  "pm.test('ST-04: Response bevat een expiresIn waarde', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('expiresIn');",
+                  "    pm.expect(json.expiresIn).to.be.a('number').and.above(0);",
+                  "})",
+                  "",
+                  "pm.test('ST-05: Content-Type is application/json', function () {",
+                  "    pm.response.to.have.header('Content-Type');",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})",
+                  "",
+                  "// Sla het accessToken op als collectievariabele",
+                  "const json = pm.response.json();",
+                  "if (json && json.accessToken) {",
+                  "    pm.collectionVariables.set(\"token\", json.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"Test!12345\",\n  \"twoFactorCode\": \"\",\n  \"twoFactorRecoveryCode\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/identity/login?useCookies=false&useSessionCookies=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "identity",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "useCookies",
+                  "value": "false"
+                },
+                {
+                  "key": "useSessionCookies",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Sla het token op na succesvolle login",
+              "const json = pm.response.json();",
+              "if (json && json.accessToken) {",
+              "    pm.collectionVariables.set(\"token\", json.accessToken);",
+              "    console.log(\"Token opgeslagen:\", json.accessToken.substring(0, 20) + \"...\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Geen pre-request script nodig voor login met geldige gebruiker"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inloggen met ongeldige credentials",
+      "item": [
+        {
+          "name": "Inloggen met ongeldige credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Response bevat geen accessToken', function () {",
+                  "    const text = pm.response.text();",
+                  "    pm.expect(text).to.not.include('accessToken');",
+                  "})",
+                  "",
+                  "pm.test('ST-03: Response geeft een foutmelding terug', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"WrongPassword!999\",\n  \"twoFactorCode\": \"\",\n  \"twoFactorRecoveryCode\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/identity/login?useCookies=false&useSessionCookies=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "identity",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "useCookies",
+                  "value": "false"
+                },
+                {
+                  "key": "useSessionCookies",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ophalen van accountgegevens",
+      "item": [
+        {
+          "name": "Ophalen van accountgegevens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Response bevat een e-mailadres', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('email');",
+                  "    pm.expect(json.email).to.be.a('string').and.not.empty;",
+                  "})",
+                  "",
+                  "pm.test('ST-03: E-mailadres komt overeen met testgebruiker', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.email).to.eql('test@test.com');",
+                  "})",
+                  "",
+                  "pm.test('ST-04: Content-Type is application/json', function () {",
+                  "    pm.response.to.have.header('Content-Type');",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/account/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Haal een geldig token op voor het ophalen van accountgegevens",
+              "const baseUrl = pm.collectionVariables.get(\"baseUrl\");",
+              "",
+              "const loginRequest = {",
+              "    url: `${baseUrl}/api/identity/login?useCookies=false&useSessionCookies=true`,",
+              "    method: \"POST\",",
+              "    header: {",
+              "        \"Content-Type\": \"application/json\",",
+              "        \"Accept\": \"application/json\"",
+              "    },",
+              "    body: {",
+              "        mode: \"raw\",",
+              "        raw: JSON.stringify({",
+              "            email: \"test@itcure.com\",",
+              "            password: \"Test!123\",",
+              "            twoFactorCode: \"\",",
+              "            twoFactorRecoveryCode: \"\"",
+              "        })",
+              "    }",
+              "};",
+              "",
+              "pm.sendRequest(loginRequest, function (err, response) {",
+              "    if (err) {",
+              "        console.error(\"Login mislukt:\", err);",
+              "        return;",
+              "    }",
+              "    const json = response.json();",
+              "    if (json && json.accessToken) {",
+              "        pm.collectionVariables.set(\"token\", json.accessToken);",
+              "        console.log(\"Token succesvol opgehaald.\");",
+              "    } else {",
+              "        console.error(\"Geen accessToken in response:\", JSON.stringify(json));",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Updaten van huidig niveau",
+      "item": [
+        {
+          "name": "Updaten van huidig niveau",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Niveau is succesvol bijgewerkt', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        204",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('ST-03: Content-Type is application/json (indien aanwezig)', function () {",
+                  "    if (pm.response.headers.has('Content-Type')) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/account/current-level",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "current-level"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Haal een geldig token op voor het updaten van het huidige niveau",
+              "const baseUrl = pm.collectionVariables.get(\"baseUrl\");",
+              "",
+              "const loginRequest = {",
+              "    url: `${baseUrl}/api/identity/login?useCookies=false&useSessionCookies=true`,",
+              "    method: \"POST\",",
+              "    header: {",
+              "        \"Content-Type\": \"application/json\",",
+              "        \"Accept\": \"application/json\"",
+              "    },",
+              "    body: {",
+              "        mode: \"raw\",",
+              "        raw: JSON.stringify({",
+              "            email: \"test@itcure.com\",",
+              "            password: \"Test!123\",",
+              "            twoFactorCode: \"\",",
+              "            twoFactorRecoveryCode: \"\"",
+              "        })",
+              "    }",
+              "};",
+              "",
+              "pm.sendRequest(loginRequest, function (err, response) {",
+              "    if (err) {",
+              "        console.error(\"Login mislukt:\", err);",
+              "        return;",
+              "    }",
+              "    const json = response.json();",
+              "    if (json && json.accessToken) {",
+              "        pm.collectionVariables.set(\"token\", json.accessToken);",
+              "        console.log(\"Token succesvol opgehaald.\");",
+              "    } else {",
+              "        console.error(\"Geen accessToken in response:\", JSON.stringify(json));",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Registreren van een nieuwe gebruiker",
+      "item": [
+        {
+          "name": "Registreren van een nieuwe gebruiker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Registratie is succesvol afgerond', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        201",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('ST-03: Content-Type is application/json (indien aanwezig)', function () {",
+                  "    if (pm.response.headers.has('Content-Type')) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser_{{$randomInt}}@test.com\",\n  \"password\": \"Test!12345\",\n  \"name\": \"Test Gebruiker\",\n  \"age\": 30,\n  \"doctorName\": \"Dr. Jansen\",\n  \"treatmentDetails\": \"Fysiotherapie\",\n  \"treatmentDate\": \"2024-01-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/account/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Registreren met ongeldig e-mailadres",
+      "item": [
+        {
+          "name": "Registreren met ongeldig e-mailadres",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ST-01: Statuscode is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "})",
+                  "",
+                  "pm.test('ST-02: Response bevat een foutmelding', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('ST-03: Registratie wordt geweigerd bij ongeldig e-mailadres', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        400,",
+                  "        422",
+                  "    ]);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"geen-geldig-emailadres\",\n  \"password\": \"Test!12345\",\n  \"name\": \"Test Gebruiker\",\n  \"age\": 30,\n  \"doctorName\": \"Dr. Jansen\",\n  \"treatmentDetails\": \"Fysiotherapie\",\n  \"treatmentDate\": \"2024-01-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/account/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Initialiseer collectievariabelen indien niet ingesteld",
+          "if (!pm.collectionVariables.get(\"baseUrl\")) {",
+          "    pm.collectionVariables.set(\"baseUrl\", \"https://avansict2247983.azurewebsites.net\");",
+          "}",
+          "if (!pm.collectionVariables.get(\"token\")) {",
+          "    pm.collectionVariables.set(\"token\", \"\");",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

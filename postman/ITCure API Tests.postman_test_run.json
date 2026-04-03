@@ -1,0 +1,298 @@
+{
+	"id": "97a3bd10-a0ca-44f1-b2dc-90f3dffe2a5c",
+	"name": "ITCure API Tests",
+	"timestamp": "2026-04-03T13:40:38.358Z",
+	"collection_id": "52868045-5c06ebb0-f3bb-4acd-a364-7842d2da400f",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 21,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-04-03T13:40:35.202Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "495f4495-b2aa-451a-9e89-8aae6608a90e",
+			"name": "Inloggen met geldige gebruiker",
+			"url": "https://avansict2247983.azurewebsites.net/api/identity/login?useCookies=false&useSessionCookies=false",
+			"time": 898,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"ST-01: Statuscode is 200": true,
+				"ST-02: Response bevat een accessToken": true,
+				"ST-03: Response bevat een tokenType": true,
+				"ST-04: Response bevat een expiresIn waarde": true,
+				"ST-05: Content-Type is application/json": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Response bevat een accessToken": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: Response bevat een tokenType": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-04: Response bevat een expiresIn waarde": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-05: Content-Type is application/json": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				898
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 200": true,
+					"ST-02: Response bevat een accessToken": true,
+					"ST-03: Response bevat een tokenType": true,
+					"ST-04: Response bevat een expiresIn waarde": true,
+					"ST-05: Content-Type is application/json": true
+				}
+			]
+		},
+		{
+			"id": "7cf03e1f-4ab9-406d-bfb2-34c870196f9d",
+			"name": "Inloggen met ongeldige credentials",
+			"url": "https://avansict2247983.azurewebsites.net/api/identity/login?useCookies=false&useSessionCookies=false",
+			"time": 281,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"ST-01: Statuscode is 401": true,
+				"ST-02: Response bevat geen accessToken": true,
+				"ST-03: Response geeft een foutmelding terug": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 401": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Response bevat geen accessToken": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: Response geeft een foutmelding terug": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				281
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 401": true,
+					"ST-02: Response bevat geen accessToken": true,
+					"ST-03: Response geeft een foutmelding terug": true
+				}
+			]
+		},
+		{
+			"id": "63cf3655-582c-4362-9765-60b35d523a00",
+			"name": "Ophalen van accountgegevens",
+			"url": "https://avansict2247983.azurewebsites.net/api/account/me",
+			"time": 112,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"ST-01: Statuscode is 200": true,
+				"ST-02: Response bevat een e-mailadres": true,
+				"ST-03: E-mailadres komt overeen met testgebruiker": true,
+				"ST-04: Content-Type is application/json": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Response bevat een e-mailadres": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: E-mailadres komt overeen met testgebruiker": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-04: Content-Type is application/json": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				112
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 200": true,
+					"ST-02: Response bevat een e-mailadres": true,
+					"ST-03: E-mailadres komt overeen met testgebruiker": true,
+					"ST-04: Content-Type is application/json": true
+				}
+			]
+		},
+		{
+			"id": "dedebde8-585b-4a84-8bbc-5c5c353b0722",
+			"name": "Updaten van huidig niveau",
+			"url": "https://avansict2247983.azurewebsites.net/api/account/current-level",
+			"time": 276,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"ST-01: Statuscode is 200": true,
+				"ST-02: Niveau is succesvol bijgewerkt": true,
+				"ST-03: Content-Type is application/json (indien aanwezig)": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Niveau is succesvol bijgewerkt": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: Content-Type is application/json (indien aanwezig)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				276
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 200": true,
+					"ST-02: Niveau is succesvol bijgewerkt": true,
+					"ST-03: Content-Type is application/json (indien aanwezig)": true
+				}
+			]
+		},
+		{
+			"id": "e05ddd07-6166-44cb-b6c5-13e57f4dc650",
+			"name": "Registreren van een nieuwe gebruiker",
+			"url": "https://avansict2247983.azurewebsites.net/api/account/register",
+			"time": 319,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"ST-01: Statuscode is 200": true,
+				"ST-02: Registratie is succesvol afgerond": true,
+				"ST-03: Content-Type is application/json (indien aanwezig)": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Registratie is succesvol afgerond": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: Content-Type is application/json (indien aanwezig)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				319
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 200": true,
+					"ST-02: Registratie is succesvol afgerond": true,
+					"ST-03: Content-Type is application/json (indien aanwezig)": true
+				}
+			]
+		},
+		{
+			"id": "27267118-9963-4609-9326-b479a7b035ff",
+			"name": "Registreren met ongeldig e-mailadres",
+			"url": "https://avansict2247983.azurewebsites.net/api/account/register",
+			"time": 282,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"ST-01: Statuscode is 400": true,
+				"ST-02: Response bevat een foutmelding": true,
+				"ST-03: Registratie wordt geweigerd bij ongeldig e-mailadres": true
+			},
+			"testPassFailCounts": {
+				"ST-01: Statuscode is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-02: Response bevat een foutmelding": {
+					"pass": 1,
+					"fail": 0
+				},
+				"ST-03: Registratie wordt geweigerd bij ongeldig e-mailadres": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				282
+			],
+			"allTests": [
+				{
+					"ST-01: Statuscode is 400": true,
+					"ST-02: Response bevat een foutmelding": true,
+					"ST-03: Registratie wordt geweigerd bij ongeldig e-mailadres": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 2168,
+	"collection": {
+		"requests": [
+			{
+				"id": "495f4495-b2aa-451a-9e89-8aae6608a90e",
+				"method": "POST"
+			},
+			{
+				"id": "7cf03e1f-4ab9-406d-bfb2-34c870196f9d",
+				"method": "POST"
+			},
+			{
+				"id": "63cf3655-582c-4362-9765-60b35d523a00",
+				"method": "GET"
+			},
+			{
+				"id": "dedebde8-585b-4a84-8bbc-5c5c353b0722",
+				"method": "POST"
+			},
+			{
+				"id": "e05ddd07-6166-44cb-b6c5-13e57f4dc650",
+				"method": "POST"
+			},
+			{
+				"id": "27267118-9963-4609-9326-b479a7b035ff",
+				"method": "POST"
+			}
+		]
+	}
+}
